@@ -4,9 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
+  "start": "node index.js",
+  "dev": "nodemon index.js",
+  "migrate:create": "node-pg-migrate -m migrations create",
+  "migrate:up": "node-pg-migrate -m migrations up",
+  "migrate:down": "node-pg-migrate -m migrations down"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,6 +19,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "node-pg-migrate": "^8.0.4",
     "pg": "^8.21.0"
   },
   "devDependencies": {
