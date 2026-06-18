@@ -1,58 +1,74 @@
-// src/App.js
 import React, { useState, useEffect } from 'react';
 
-function App() {
-  const [dbMeta, setDbMeta] = useState(null);
+const VenuesList = () => {
+  // State to store the venues array
+  const [venues, setVenues] = useState([]);
+  // State to handle loading screens
   const [loading, setLoading] = useState(true);
+  // State to handle error UI
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/db/meta') 
-      .then((res) => {
-        if (!res.ok) throw new Error('Backend server returned an error status');
-        return res.json();
-      })
-      .then((data) => {
-        setDbMeta(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Integration handshake failed:', error);
-        setDbMeta({ success: false, error: error.message });
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <div style={{ padding: '20px' }}>Loading system metadata...</div>;
-
- 
-  const systemInfo = dbMeta.success && dbMeta.systemDetails ? dbMeta.systemDetails[0] : null;
-
-  return (
-    <div style={{ padding: '30px', fontFamily: 'sans-serif' }}>
-      <h1>Full Stack Handshake Test</h1>
-      
-      <div style={{
-        padding: '20px',
-        borderRadius: '6px',
-        backgroundColor: dbMeta.success ? '#e6f4ea' : '#fce8e6',
-        color: dbMeta.success ? '#137333' : '#c5221f',
-        border: `1px solid ${dbMeta.success ? '#a3cfbb' : '#f5c2c7'}`
-      }}>
-        <h2>Integration Status: {dbMeta.success ? 'SUCCESS' : 'FAILED'}</h2>
+    const fetchVenues = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:5000/venues');
         
-        {dbMeta.success && systemInfo ? (
-          <ul style={{ fontSize: '16px', lineHeight: '1.8' }}>
-            {/* These keys align perfectly with your PostgreSQL current_database() and current_user query outputs */}
-            <li><strong>Active Database:</strong> {systemInfo.current_database}</li>
-            <li><strong>Database User:</strong> {systemInfo.current_user}</li>
-            <li><strong>PostgreSQL Version:</strong> {systemInfo.version}</li>
-          </ul>
-        ) : (
-          <p><strong>Connection Error:</strong> {dbMeta.error || dbMeta.message}</p>
-        )}
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Note: If you implemented the controller refactor from the previous step,
+        // your data structure might be 'data.data'. If not, it is just 'data'.
+        setVenues(Array.isArray(data) ? data : data.data || []);
+      } catch (err) {
+        console.error("Error fetching data on frontend:", err.message);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVenues();
+  }, []); // Empty dependency array ensures this runs exactly ONCE when the component loads
+
+  // 1. Conditional Rendering for Loading state
+  if (loading) return <p style={{ padding: '20px' }}>Loading venues...</p>;
+  
+  // 2. Conditional Rendering for Error state
+  if (error) return <p style={{ color: 'red', padding: '20px' }}>Error: {error}</p>;
+
+  // 3. Render the fetched data onto the page
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h2>Available Venues ({venues.length})</h2>
+      
+      <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))' }}>
+        {venues.map((venue) => (
+          <div 
+            key={venue.id} 
+            style={{ 
+              border: '1px solid #ccc', 
+              borderRadius: '8px', 
+              padding: '16px',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
+          >
+            <h3 style={{ margin: '0 0 10px 0', color: '#333' }}>{venue.name}</h3>
+            <p style={{ color: '#666', fontSize: '14px' }}>{venue.description}</p>
+            <p><strong>City:</strong> {venue.city}</p>
+            <p><strong>Address:</strong> {venue.address}</p>
+            <p><strong>Capacity:</strong> {venue.capacity} people</p>
+            <p style={{ color: '#007bff', fontWeight: 'bold' }}>
+              ₹{venue.price_per_hour} / hour
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export default App;
+export default VenuesList;
