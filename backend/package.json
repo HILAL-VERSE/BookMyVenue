@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node index.js",
-  "dev": "nodemon index.js",
-  "migrate:create": "node-pg-migrate -m migrations create",
-  "migrate:up": "node-pg-migrate -m migrations up",
-  "migrate:down": "node-pg-migrate -m migrations down"
-},
-
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "migrate:create": "node-pg-migrate -m migrations create",
+    "migrate:up": "node-pg-migrate -m migrations up",
+    "migrate:down": "node-pg-migrate -m migrations down",
+    "db:seed": "node db/seeders/dummy-seed.js",
+    "db:seed:dev": "cross-env NODE_ENV=development node db/seeders/dummy-seed.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -23,6 +24,7 @@
     "pg": "^8.21.0"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.14"
   }
 }
