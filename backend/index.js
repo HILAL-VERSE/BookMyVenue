@@ -7,11 +7,15 @@ const PORT = 5000;
 const healthRouter = require('./routes/health.routes');
 const dbRoutes = require('./routes/dbRoutes');
 const getVenuesRouter = require('./routes/getVenues');
+const bookingRouter = require('./routes/bookingRoutes')
 
-app.use(cors())
+app.use(cors());
+app.use(express.json());
+
 app.use('/health', healthRouter);
 app.use('/db', dbRoutes);
 app.use('/venues', getVenuesRouter);
+app.use('/booking', bookingRouter)
 
 app.get('/', (req, res) => {
     res.send('Hello, World! Your Express server is running.');
