@@ -81,4 +81,36 @@ router.post('/', verifyToken, async (req, res) => {
         }
 });
 
+router.get('/my-bookings', verifyToken, async (req, res) =>{
+    const user_id = req.user.id;
+    try{
+        client = await db.connect();
+
+        const bookings = await client.query('SELECT * FROM bookings WHERE user_id = $1 ORDER BY created_at', [user_id]);
+
+        if(!bookings.rows.length){
+            return res.status(200).json({
+                message: 'You dont have any booking record',
+                count: bookings.rows.length,
+            });
+        }
+        
+        return res.status(200).json({
+            message: 'Bookings retrieved successfully',
+            count: bookings.rows.length,
+            bookings: bookings.rows
+        });
+
+    }catch(err){
+        console.error('Fetch booking error: ', err.message);
+        return res.status(500).json({
+            message: 'Internal server error: '
+        });
+    }finally{
+        if(client){
+            client.release();
+        }
+    }
+});
+
 module.exports = router;
