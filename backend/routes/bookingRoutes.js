@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-router.post('/', async (req, res) => {
-        let client; 
-        const {user_id, venue_id, start_datetime, end_datetime} = req.body;
+const verifyToken = require('../middlwares/auth');
 
-        if(!user_id || !venue_id || !start_datetime || !end_datetime){
+router.post('/', verifyToken, async (req, res) => {
+        let client; 
+        const {venue_id, start_datetime, end_datetime} = req.body;
+
+        const user_id = req.user.id;
+
+        if(!venue_id || !start_datetime || !end_datetime){
             return res.status(400).json({
                 error: 'Missing required fields'
             });
@@ -26,13 +30,7 @@ router.post('/', async (req, res) => {
         try{
             client = await db.connect();
             await client.query('BEGIN');
-            // Rule 2: User must exist
-            const userCheck = await client.query('SELECT id FROM users WHERE id = $1', [user_id]);
-            //Validate missing fields
-            if(userCheck.rows.length === 0) {
-                await client.query('ROLLBACK');
-                return res.status(404).json({ error: 'User does not exist.' });
-            }
+            
             // Rule 3: Venue must exist
             const venueCheck = await client.query('SELECT id, price_per_hour FROM venues WHERE id = $1', [venue_id]);
             if (venueCheck.rows.length === 0) {

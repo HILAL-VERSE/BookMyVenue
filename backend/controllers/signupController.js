@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
-const express = require('express');
-const router = express.Router();
+
 
 const signupController = async (req, res) => {
     const {name,  email, password} = req.body;
@@ -14,7 +13,7 @@ const signupController = async (req, res) => {
 
     try {
         //check if th user already exists
-        existingUser = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+        const existingUser = await db.query('SELECT id FROM users WHERE email = $1', [email]);
         if(existingUser.rows.length > 0){
             return res.status(400).json({
                 message: 'An account with this ueamil already exist'
