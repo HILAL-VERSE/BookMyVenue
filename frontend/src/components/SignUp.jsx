@@ -83,14 +83,7 @@ const SignUp = () => {
 
     return(
         <div style={{maxWidth: '400px', margin: '50px auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px'}}>
-            {isLoggedIn ? (
-                <div style={{ textAlign: 'center', padding: '20px' }}>
-                    <h2 style={{ color: '#28a745' }}>Welcome! 🎉</h2>
-                    <p style={{ fontSize: '18px', fontWeight: 'bold' }}>Logged into user dashboard</p>
-                    <p>You have successfully registered and logged into your portal.</p>
-                </div>
-            ):(
-                <>
+                    
             <h2>Create Account</h2>
 
             {error && <p style={{ color: 'red', marginBottom: '15px' }}>{error}</p>}
@@ -168,8 +161,6 @@ const SignUp = () => {
                     {loading ? 'Registering...' : 'Sign Up'}
                 </button>
             </form>
-            </>
-            )}
         </div>
     );
 };
