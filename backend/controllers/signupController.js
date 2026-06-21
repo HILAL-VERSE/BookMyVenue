@@ -4,8 +4,8 @@ const db = require('../config/db');
 
 
 const signupController = async (req, res) => {
-    const {name,  email, password} = req.body;
-    if(!name || !email || !password) {
+    const {name,  email, password, role} = req.body;
+    if(!name || !email || !password || !role) {
         return res.status(400).json({
             message: 'Name, email and password are required fields'
         });
@@ -25,12 +25,12 @@ const signupController = async (req, res) => {
 
         //save the user to db
         const insertQuery = `
-        INSERT INTO users (name, email, password_hash)
-        VALUES ($1, $2, $3)
+        INSERT INTO users (name, email, password_hash, role)
+        VALUES ($1, $2, $3, $4)
         RETURNING id, name, email, role, created_at;
         `;
 
-        const newUser = await db.query(insertQuery, [name,email,hashedPassword]);
+        const newUser = await db.query(insertQuery, [name,email,hashedPassword,role]);
         const user = newUser.rows[0];
 
         //generate jwt
