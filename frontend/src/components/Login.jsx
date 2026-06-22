@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
+    const navigate = useNavigate();
     const [ formData, setFormData ]  = useState({
         email: '',
         password: ''
@@ -52,13 +54,21 @@ const Login = () => {
 
             if (data.token) {
                 localStorage.setItem('token', data.token);
+
+                const payload = JSON.parse(atob(data.token.split('.')[1]));
+                const userRole = payload.role;
+
+                alert("login successful!");
+
+                if (userRole === 'admin') {
+                    navigate('/admin-dashboard');
+                } else if(userRole === 'user'){
+                    navigate('/user-dashboard'); 
+                }
             }
 
 
-
-            alert("login successful!");
             setIsLoggedIn(true);
-            alert("Logged In");
             setFormData({email: '', password: ''});
 
         }catch (error) {

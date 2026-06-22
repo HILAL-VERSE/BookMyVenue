@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const SignUp = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -67,7 +70,14 @@ const SignUp = () => {
 
             if (data.token) {
                 localStorage.setItem('token', data.token);
-                console.log("JWT token saved succesfuly")
+                const payload = JSON.parse(atob(data.token.split('.')[1]));
+                const userRole = payload.role;
+
+                if(userRole === 'admin' ){
+                    navigate('/admin-dashboard');
+                }else if(userRole === 'user' ){
+                    navigate('/user-dashboard');
+                }
             }
 
             alert("Registration successful!");
