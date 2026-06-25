@@ -9,6 +9,8 @@ const UserDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [selectedVenue, setSelectedVenue ] = useState(null);
     const [userBookings, setUserBookings] = useState([]);
+    const [exploreVenueId, setExploreVenueId] = useState(null);
+    const [exploreVenueData, setExploreVenueData] = useState(null);
     
 
     const [showBookingsModal, setShowBookingsModal] = useState(false);
@@ -59,6 +61,39 @@ const UserDashboard = () => {
         }
     };
 
+    const handleExploreButton = async (venueId) => {
+        try {
+            const token = localStorage.getItem('token');
+            setExploreVenueId(venueId)
+        
+            const response = await fetch(`http://localhost:5000/api/venues/${venueId}`, {
+                method: 'GET', 
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+            setExploreVenueData(data.venue);
+            console.log(data);
+            console.log(exploreVenueData);
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to get venue details");
+            }
+
+
+        } catch (err) {
+            alert(`Error: ${err.message}`);
+        }
+    }
+
+
+    const handleBackToDashboard = () => {
+        setExploreVenueId(null);
+        setExploreVenueData(null);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -113,6 +148,37 @@ const UserDashboard = () => {
 
     if(loading) return <p style={{padding: '20px'}}>Loading Available Venues....</p>
     if (error) return <p style={{ padding: '20px', color: 'red' }}>Error: {error}</p>;
+
+
+    if (exploreVenueId && exploreVenueData) {
+    return (
+        <div style={{ padding: '30px', maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{ border: '1px solid #ccc', padding: '25px', borderRadius: '8px' }}>
+                <h2>{exploreVenueData.name}</h2>
+                <p><strong>City:</strong> {exploreVenueData.city}</p>
+                <p><strong>Address:</strong> {exploreVenueData.address}</p>
+                <p><strong>Capacity:</strong> {exploreVenueData.capacity} people</p>
+                <p><strong>Price:</strong> ${exploreVenueData.price_per_hour} / hour</p>
+                <p><strong>Description:</strong> {exploreVenueData.description || 'No description provided.'}</p>
+                
+                <div style={{display: 'flex', justifyContent: 'start', alignItems: 'center', width: 'fill-content', gap: '30px'}}>
+                <button 
+                    onClick={() => {
+                        setExploreVenueId(null);
+                        setExploreVenueData(null);
+                        handleBooking(exploreVenueData)}}
+                    style={{ marginTop: '20px', padding: '10px', backgroundColor: '#3b0c67', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '150px' }}
+                >
+                    Book Venue
+                </button>
+                <button onClick={handleBackToDashboard} style={{ marginTop: '20px', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '200px' }}>
+                ← Back to Dashboard
+            </button>
+            </div>
+            </div>
+        </div>
+    );
+}
 
     return (
         <div style={{padding: '30px', maxWidth: '800px', margin: '0 auto'}}>
@@ -211,17 +277,31 @@ const UserDashboard = () => {
                 {venues.map((venue) => (
                     <div key={venue.id} style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '6px'}}>
                         <h3>{venue.name}</h3>
-                        <p>Location : {venue.location}</p>
+                        <p>Location : {venue.city}</p>
+                        <p>Location : {venue.address}</p>
                         <p>Capacity: {venue.capacity}</p>
-                        <button 
-                            onClick={() => handleBooking(venue)}
-                            style={{
-                                marginTop: '10px', padding: '8px 12px', backgroundColor: '#007bff',
-                                color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%'
-                            }}
-                        >
-                            Book Venue
-                        </button>
+                        <div style={{display: 'flex', justifyContent: 'space-between', gap: '20px'}}>
+                            <button 
+                                onClick={() => handleBooking(venue)}
+                                style={{
+                                    marginTop: '10px', padding: '8px 12px', backgroundColor: '#007bff',
+                                    color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%',
+                                    fontWeight: '700'
+                                }}
+                            >
+                                Book Venue
+                            </button>
+
+                            <button 
+                            onClick={() => handleExploreButton(venue.id)}
+                                style={{
+                                    marginTop: '10px', padding: '8px 12px', backgroundColor: '#082748',
+                                    color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%'
+                                }}
+                            >
+                                Explore More
+                            </button>
+                        </div>
                     </div>
                 ))}
             </div>
