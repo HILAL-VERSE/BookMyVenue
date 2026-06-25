@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import BookingForm from './BookingForm';
 
 const UserDashboard = () => {
     const navigate = useNavigate();
@@ -7,11 +8,20 @@ const UserDashboard = () => {
     const [ error, setError ] = useState('');
     const [loading, setLoading] = useState(true);
 
+    const [selectedVenue, setSelectedVenue ] = useState(null);
+
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Clear token
-        navigate('/'); // Redirect to home
+        localStorage.removeItem('token'); 
+        navigate('/'); 
     };
 
+    const handleBooking = (venue) =>{
+        setSelectedVenue(venue);
+    };
+
+    const handleCloseForm = () => {
+        setSelectedVenue(null);
+    };
 
     useEffect(() => {
         const fetchVenues = async () => {
@@ -45,6 +55,31 @@ const UserDashboard = () => {
 
     return (
         <div style={{padding: '30px', maxWidth: '800px', margin: '0 auto'}}>
+
+            {selectedVenue && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000
+                }}>
+                    <div style={{ position: 'relative' }}>
+                    <BookingForm 
+                        venueId={selectedVenue.id} 
+                        venueName={selectedVenue.name} 
+                        onClose={handleCloseForm}
+                    />
+                    </div>
+                </div>
+            )}
+
+
             <h2>Available Venues</h2>
             <div style={{display: 'grid', gap: '20px', marginTop: '20px'}}>
                 {venues.map((venue) => (
@@ -52,6 +87,21 @@ const UserDashboard = () => {
                         <h3>{venue.name}</h3>
                         <p>Location : {venue.location}</p>
                         <p>Capacity: {venue.capacity}</p>
+                        <button 
+                            onClick={() => handleBooking(venue)}
+                            style={{
+                                marginTop: '10px',
+                                padding: '8px 12px',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                width: '100%'
+                            }}
+                            >
+                            Book Venue
+                        </button>
                     </div>
                 ))}
             </div>

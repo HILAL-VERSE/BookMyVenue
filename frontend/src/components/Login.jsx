@@ -30,7 +30,7 @@ const Login = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevents page reload
+        e.preventDefault(); 
         setError('');
         setLoading(true);
 
