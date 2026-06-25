@@ -7,8 +7,11 @@ const UserDashboard = () => {
     const [ venues, setVenues ] = useState([]);
     const [ error, setError ] = useState('');
     const [loading, setLoading] = useState(true);
-
     const [selectedVenue, setSelectedVenue ] = useState(null);
+    const [userBookings, setUserBookings] = useState([]);
+    
+
+    const [showBookingsModal, setShowBookingsModal] = useState(false);
 
     const handleLogout = () => {
         localStorage.removeItem('token'); 
@@ -23,10 +26,45 @@ const UserDashboard = () => {
         setSelectedVenue(null);
     };
 
+    
+    const handleCancelBooking = async (bookingId) => {
+        const confirmCancel = window.confirm("Are you sure you want to cancel this booking?");
+        if (!confirmCancel) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            
+        
+            const response = await fetch(`http://localhost:5000/api/booking/${bookingId}`, {
+                method: 'PATCH', 
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to cancel booking");
+            }
+
+            alert(data.message || "Booking cancelled successfully!");
+            
+            
+
+
+        } catch (err) {
+            alert(`Error: ${err.message}`);
+        }
+    };
+
+
     useEffect(() => {
+        const token = localStorage.getItem('token');
+
         const fetchVenues = async () => {
             try {
-                const token = localStorage.getItem('token');
                 const response  = await fetch('http://localhost:5000/venues', {
                     method: 'GET',
                     headers: {
@@ -34,20 +72,43 @@ const UserDashboard = () => {
                         'Content-Type': 'application/json'
                     }
                 });
+                
                 const data = await response.json();
+                 
                 if(!response.ok){
-                    throw new Error(data.message || "Failed to fecth venues");
+                    throw new Error(data.message || "Failed to fetch venues");
                 }
 
                 setVenues(data);
             }catch(err){
                 setError(err.message);
-            }finally{
-                setLoading(false);
             }
         };
 
-        fetchVenues();
+        const fetchUserBookings = async () => {
+            try{
+                const response = await fetch('http://localhost:5000/booking/my-bookings', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+
+                if(!response.ok){
+                    throw new Error(data.message || "Failed to fetch your bookings");
+                }
+
+                setUserBookings(data.bookings || []);
+            }catch(err){
+                console.error("History fetch error: ", err.message);
+            }
+        };
+
+        Promise.all([fetchVenues(), fetchUserBookings()]).finally(() => {
+            setLoading(false);
+        });
     }, []);
 
     if(loading) return <p style={{padding: '20px'}}>Loading Available Venues....</p>
@@ -58,29 +119,94 @@ const UserDashboard = () => {
 
             {selectedVenue && (
                 <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 1000
+                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
                 }}>
                     <div style={{ position: 'relative' }}>
-                    <BookingForm 
-                        venueId={selectedVenue.id} 
-                        venueName={selectedVenue.name} 
-                        onClose={handleCloseForm}
-                    />
+                        <BookingForm 
+                            venueId={selectedVenue.id} 
+                            venueName={selectedVenue.name} 
+                            onClose={handleCloseForm}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {showBookingsModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
+                }}>
+                    <div style={{ 
+                        backgroundColor: 'white', padding: '30px', borderRadius: '8px', 
+                        width: '500px', maxHeight: '80vh', overflowY: 'auto', position: 'relative' 
+                    }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                            <h2 style={{ margin: 0 }}>My Bookings</h2>
+                            <button onClick={() => setShowBookingsModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        </div>
+                        
+                        {userBookings.length === 0 ? (
+                            <p style={{ color: '#666', fontStyle: 'italic' }}>You don't have any booking records yet.</p>
+                        ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                {userBookings.map((booking) => (
+                                    <div key={booking.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '6px', backgroundColor: '#f9f9f9' }}>
+                                        <h4 style={{ margin: '0 0 5px 0' }}>Booking #{booking.id}</h4>
+                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>Start:</strong> {new Date(booking.start_datetime).toLocaleString()}</p>
+                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>End:</strong> {new Date(booking.end_datetime).toLocaleString()}</p>
+                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>Total Cost:</strong> 💰${booking.total_price}</p>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                                        <span style={{
+                                            display: 'inline-block', marginTop: '5px', padding: '3px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold',
+                                            backgroundColor: booking.status === 'confirmed' ? '#d1e7dd' : '#fff3cd',
+                                            color: booking.status === 'confirmed' ? '#0f5132' : '#664d03'
+                                        }}>{booking.status}
+                                        </span>
+                                         {booking.status !== 'cancelled' && (
+                                            <button
+                                                onClick={() => handleCancelBooking(booking.id)}
+                                                style={{
+                                                    padding: '6px 12px',
+                                                    backgroundColor: '#dc3545',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '13px'
+                                                }}
+                                            >Cancel</button>
+                                        )}
+                                    </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
 
 
-            <h2>Available Venues</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ margin: 0 }}>Available Venues</h2>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                        onClick={() => setShowBookingsModal(true)} 
+                        style={{ padding: '8px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                        My Bookings
+                    </button>
+                    <button 
+                        onClick={handleLogout} 
+                        style={{ padding: '8px 15px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
             <div style={{display: 'grid', gap: '20px', marginTop: '20px'}}>
                 {venues.map((venue) => (
                     <div key={venue.id} style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '6px'}}>
@@ -90,22 +216,15 @@ const UserDashboard = () => {
                         <button 
                             onClick={() => handleBooking(venue)}
                             style={{
-                                marginTop: '10px',
-                                padding: '8px 12px',
-                                backgroundColor: '#007bff',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer',
-                                width: '100%'
+                                marginTop: '10px', padding: '8px 12px', backgroundColor: '#007bff',
+                                color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%'
                             }}
-                            >
+                        >
                             Book Venue
                         </button>
                     </div>
                 ))}
             </div>
-            <button onClick={handleLogout} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
         </div>
     );
 };
