@@ -14,6 +14,7 @@ const cancelBookingRouter = require('./routes/cancelBookingRoute');
 const adminBookingRouter = require('./routes/adminBookingsRoute');
 const getVenueById = require('./routes/getVenueById');
 const ownerApi = require('./routes/ownerRoute');
+const adminVenueAdding = require('./routes/addVenueByAdmin');
 
 app.use(cors());
 app.use(express.json());
@@ -29,6 +30,7 @@ app.use('/api', cancelBookingRouter);
 app.use('/api', adminBookingRouter);
 app.use('/api', getVenueById);
 app.use('/api', ownerApi);
+app.use('/api', adminVenueAdding);
 
 app.get('/', (req, res) => {
     res.send('Hello, World! Your Express server is running.');
