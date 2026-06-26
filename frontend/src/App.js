@@ -6,6 +6,7 @@ import SignUp from './components/SignUp';
 import Login from './components/Login';
 import UserDashboard from './components/UserDashboard';
 import AdminDashboard from './components/AdminDashboard';
+import OwnerDashboard from './components/OwnerDashboard';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
 
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
+        <Route path="/owner-dashboard" element={<OwnerDashboard />} />
 
         <Route path='*' element={<Navigate to="/" replace />} />
       </Routes>

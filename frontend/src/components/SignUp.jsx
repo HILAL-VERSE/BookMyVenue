@@ -77,6 +77,8 @@ const SignUp = () => {
                     navigate('/admin-dashboard');
                 }else if(userRole === 'user' ){
                     navigate('/user-dashboard');
+                } else if (userRole == 'owner'){
+                    navigate('/owner-dashboard');
                 }
             }
 
