@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AddVenueFormByAdmin from './AddVenueFormByAdmin';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -7,9 +8,12 @@ const AdminDashboard = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true);
 
+    const [showModal, setShowModal] = useState(false);
+
+    
     const handleLogout = () => {
-        localStorage.removeItem('token'); // Clear token
-        navigate('/'); // Redirect to home
+        localStorage.removeItem('token'); 
+        navigate('/'); 
     };
 
     useEffect(() => {
@@ -48,8 +52,27 @@ const AdminDashboard = () => {
 
     return (
         <div style={{ padding: '30px', maxWidth: '800px', margin: '0 auto' }}>
-            <h2 style={{ color: '#dc3545' }}>Admin Control Center</h2>
-            <h3>All Booking Details</h3>
+            {showModal && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
+                }}>
+                    <div style={{ position: 'relative' }}>
+                        <AddVenueFormByAdmin onClose={() => setShowModal(false)} />
+                    </div>
+                </div>
+            )}
+            <div>
+                <div>
+                <h2 style={{ color: '#dc3545' }}>Admin Control Center</h2>
+                <h3>All Booking Details</h3>
+                </div>
+                <div style={{ display: 'flex', gap: '10px'}}>
+                    <button onClick={() => setShowModal(true)} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#221db0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Add Venue</button>
+                     <button onClick={handleLogout} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
+                </div>
+            </div>
             <div style={{ display: 'grid', gap: '15px', marginTop: '20px' }}>
                 {bookings.map((booking) => (
                 <div key={booking.id} style={{ border: '1px solid #dc3545', padding: '15px', borderRadius: '6px', backgroundColor: '#fff5f5' }}>
@@ -64,7 +87,6 @@ const AdminDashboard = () => {
             ))}
 
             </div>
-             <button onClick={handleLogout} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
         </div>
     );
 };
