@@ -37,7 +37,6 @@ const AddVenueFormByAdmin = ({ onClose }) => {
                 body: JSON.stringify(formData)
             });
 
-            // Fallback for HTML error pages to avoid JSON parser crashes
             if (!response.ok) {
                 const textError = await response.text();
                 try {
@@ -52,10 +51,16 @@ const AddVenueFormByAdmin = ({ onClose }) => {
             setIsError(false);
             setMessage(data.message || 'Venue added successfully!');
             
-            // Clear form
-            setFormData({ name: '', description: '', city: '', address: '', capacity: '', price_per_hour: '', owner_email: '' });
+            setFormData({ 
+                name: '', 
+                description: '', 
+                city: '', 
+                address: '', 
+                capacity: '', 
+                price_per_hour: '', 
+                owner_email: '' 
+            });
             
-            // Optional: Close modal after a short delay so the user sees the success message
             setTimeout(() => { if (onClose) onClose(); }, 1500);
 
         } catch (err) {
@@ -66,59 +71,206 @@ const AddVenueFormByAdmin = ({ onClose }) => {
         }
     };
 
-    const inputStyle = { width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' };
-    const labelStyle = { display: 'block', marginBottom: '5px', fontWeight: '500' };
+    // Styles
+    const labelStyle = {
+        display: 'block',
+        marginBottom: '6px',
+        color: '#E0E0E0',
+        fontWeight: '500'
+    };
+
+    const inputStyle = {
+        width: '100%',
+        padding: '14px 16px',
+        background: 'rgba(255,255,255,0.08)',
+        border: '1px solid rgba(199, 255, 46, 0.25)',
+        borderRadius: '12px',
+        color: 'white',
+        fontSize: '1rem',
+        outline: 'none'
+    };
 
     return (
-        <div style={{ width: '400px', padding: '25px', border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h3 style={{ margin: '0' }}>Add New Venue</h3>
-                {onClose && (
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+        <div style={{
+            minHeight: '100vh',
+            background: 'linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #0F1A0F 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        }}>
+            
+            <div style={{
+                background: 'rgba(26, 26, 26, 0.92)',
+                backdropFilter: 'blur(24px)',
+                border: '1px solid rgba(199, 255, 46, 0.25)',
+                borderRadius: '24px',
+                boxShadow: '0 25px 70px rgba(0, 0, 0, 0.7)',
+                padding: '40px 45px',
+                width: '100%',
+                maxWidth: '520px',
+                position: 'relative'
+            }}>
+                {/* Header */}
+                <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center', 
+                    marginBottom: '30px' 
+                }}>
+                    <h3 style={{ 
+                        margin: 0, 
+                        fontSize: '2rem', 
+                        fontWeight: '800',
+                        color: '#FFFFFF'
+                    }}>
+                        Add New Venue
+                    </h3>
+                    
+                    {onClose && (
+                        <button 
+                            onClick={onClose} 
+                            style={{ 
+                                background: 'none', 
+                                border: 'none', 
+                                fontSize: '28px', 
+                                color: '#808080',
+                                cursor: 'pointer',
+                                lineHeight: '1'
+                            }}
+                        >
+                            ✕
+                        </button>
+                    )}
+                </div>
+
+                {/* Message */}
+                {message && (
+                    <p style={{ 
+                        padding: '12px 16px', 
+                        borderRadius: '10px', 
+                        backgroundColor: isError ? 'rgba(255, 107, 107, 0.15)' : 'rgba(199, 255, 46, 0.15)', 
+                        color: isError ? '#ff6b6b' : '#C7FF2E',
+                        fontSize: '15px',
+                        marginBottom: '25px',
+                        border: isError ? '1px solid rgba(255,107,107,0.3)' : '1px solid rgba(199,255,46,0.3)'
+                    }}>
+                        {message}
+                    </p>
                 )}
+
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                    
+                    <div>
+                        <label style={labelStyle}>Venue Name</label>
+                        <input 
+                            type="text" 
+                            name="name" 
+                            value={formData.name} 
+                            onChange={handleChange} 
+                            required 
+                            style={inputStyle} 
+                        />
+                    </div>
+
+                    <div>
+                        <label style={labelStyle}>Description</label>
+                        <textarea 
+                            name="description" 
+                            value={formData.description} 
+                            onChange={handleChange} 
+                            required 
+                            style={{ ...inputStyle, height: '80px', resize: 'vertical' }} 
+                        />
+                    </div>
+
+                    <div>
+                        <label style={labelStyle}>City</label>
+                        <input 
+                            type="text" 
+                            name="city" 
+                            value={formData.city} 
+                            onChange={handleChange} 
+                            required 
+                            style={inputStyle} 
+                        />
+                    </div>
+
+                    <div>
+                        <label style={labelStyle}>Address</label>
+                        <input 
+                            type="text" 
+                            name="address" 
+                            value={formData.address} 
+                            onChange={handleChange} 
+                            required 
+                            style={inputStyle} 
+                        />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <div style={{ flex: 1 }}>
+                            <label style={labelStyle}>Capacity</label>
+                            <input 
+                                type="number" 
+                                name="capacity" 
+                                value={formData.capacity} 
+                                onChange={handleChange} 
+                                required 
+                                min="1" 
+                                style={inputStyle} 
+                            />
+                        </div>
+                        <div style={{ flex: 1 }}>
+                            <label style={labelStyle}>Price/Hour ($)</label>
+                            <input 
+                                type="number" 
+                                name="price_per_hour" 
+                                value={formData.price_per_hour} 
+                                onChange={handleChange} 
+                                required 
+                                min="0" 
+                                step="0.01" 
+                                style={inputStyle} 
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style={labelStyle}>Owner Email</label>
+                        <input 
+                            type="email" 
+                            name="owner_email" 
+                            value={formData.owner_email} 
+                            onChange={handleChange} 
+                            required 
+                            style={inputStyle} 
+                        />
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        disabled={loading}
+                        style={{
+                            marginTop: '15px',
+                            padding: '16px',
+                            background: loading ? '#555' : '#C7FF2E',
+                            color: loading ? '#aaa' : '#0F0F0F',
+                            border: 'none',
+                            borderRadius: '60px',
+                            fontSize: '1.1rem',
+                            fontWeight: '700',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            transition: 'all 0.3s ease'
+                        }}
+                        onMouseOver={(e) => !loading && (e.target.style.transform = 'translateY(-3px)')}
+                        onMouseOut={(e) => !loading && (e.target.style.transform = 'translateY(0)')}
+                    >
+                        {loading ? 'Processing...' : 'Add Venue'}
+                    </button>
+                </form>
             </div>
-
-            {message && (
-                <p style={{ padding: '10px', borderRadius: '4px', backgroundColor: isError ? '#f8d7da' : '#d1e7dd', color: isError ? '#842029' : '#0f5132', fontSize: '14px' }}>
-                    {message}
-                </p>
-            )}
-
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div>
-                    <label style={labelStyle}>Venue Name</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required style={inputStyle} />
-                </div>
-                <div>
-                    <label style={labelStyle}>Description</label>
-                    <textarea name="description" value={formData.description} onChange={handleChange} required style={{ ...inputStyle, height: '60px', resize: 'vertical' }} />
-                </div>
-                <div>
-                    <label style={labelStyle}>City</label>
-                    <input type="text" name="city" value={formData.city} onChange={handleChange} required style={inputStyle} />
-                </div>
-                <div>
-                    <label style={labelStyle}>Address</label>
-                    <input type="text" name="address" value={formData.address} onChange={handleChange} required style={inputStyle} />
-                </div>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <div style={{ flex: 1 }}>
-                        <label style={labelStyle}>Capacity</label>
-                        <input type="number" name="capacity" value={formData.capacity} onChange={handleChange} required min="1" style={inputStyle} />
-                    </div>
-                    <div style={{ flex: 1 }}>
-                        <label style={labelStyle}>Price/Hour ($)</label>
-                        <input type="number" name="price_per_hour" value={formData.price_per_hour} onChange={handleChange} required min="0" step="0.01" style={inputStyle} />
-                    </div>
-                </div>
-                <div>
-                    <label style={labelStyle}>Owner Email</label>
-                    <input type="email" name="owner_email" value={formData.owner_email} onChange={handleChange} required style={inputStyle} />
-                </div>
-                <button type="submit" disabled={loading} style={{ marginTop: '10px', padding: '10px', backgroundColor: loading ? '#ccc' : '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}>
-                    {loading ? 'Processing...' : 'Add Venue'}
-                </button>
-            </form>
         </div>
     );
 };

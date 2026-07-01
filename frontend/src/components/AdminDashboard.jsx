@@ -52,44 +52,135 @@ const AdminDashboard = () => {
     if (error) return <p style={{ padding: '20px', color: 'red' }}>Error: {error}</p>;
 
     return (
-        <div style={{ padding: '30px', maxWidth: '800px', margin: '0 auto' }}>
-            {showModal && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
-                }}>
-                    <div style={{ position: 'relative' }}>
-                        <AddVenueFormByAdmin onClose={() => setShowModal(false)} />
-                    </div>
-                </div>
-            )}
+    <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #0F1A0F 100%)',
+        color: '#FFFFFF',
+        padding: '30px',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+        
+        {/* Header */}
+        <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '40px',
+            flexWrap: 'wrap',
+            gap: '15px'
+        }}>
             <div>
-                <div>
-                <h2 style={{ color: '#dc3545' }}>Admin Control Center</h2>
-                <h3>All Booking Details</h3>
-                </div>
-                <div style={{ display: 'flex', gap: '10px'}}>
-                    <button onClick={() => setShowModal(true)} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#221db0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Add Venue</button>
-                     <button onClick={handleLogout} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
-                </div>
+                <h2 style={{ 
+                    margin: '0 0 8px 0', 
+                    fontSize: '2.4rem', 
+                    fontWeight: '800',
+                    color: '#C7FF2E'
+                }}>
+                    Admin Control Center
+                </h2>
+                <h3 style={{ margin: 0, color: '#B0B0B0', fontWeight: '500' }}>
+                    All Booking Details
+                </h3>
             </div>
-            <div style={{ display: 'grid', gap: '15px', marginTop: '20px' }}>
-                {bookings.map((booking) => (
-                <div key={booking.id} style={{ border: '1px solid #dc3545', padding: '15px', borderRadius: '6px', backgroundColor: '#fff5f5' }}>
-                    <p><strong>Booking ID:</strong> {booking.id}</p>
-                    <p><strong>User ID Connected:</strong> {booking.user_id}</p>
-                    <p><strong>Venue ID Connected:</strong> {booking.venue_id}</p>
-                    <p><strong>Start Time:</strong> {new Date(booking.start_datetime).toLocaleString()}</p>
-                    <p><strong>End Time:</strong> {new Date(booking.end_datetime).toLocaleString()}</p>
-                    <p><strong>Status:</strong> {booking.status}</p>
-                    <p><strong>Price Paid:</strong> ${booking.total_price}</p>
-                </div>
-            ))}
 
+            <div style={{ display: 'flex', gap: '12px' }}>
+                <button 
+                    onClick={() => setShowModal(true)}
+                    style={{
+                        padding: '12px 24px',
+                        background: '#C7FF2E',
+                        color: '#0F0F0F',
+                        border: 'none',
+                        borderRadius: '50px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'translateY(-3px)'}
+                    onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                    + Add Venue
+                </button>
+
+                <button 
+                    onClick={handleLogout}
+                    style={{
+                        padding: '12px 24px',
+                        background: '#ff4757',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s'
+                    }}
+                >
+                    Logout
+                </button>
             </div>
         </div>
-    );
+
+        {/* Bookings List */}
+        <div style={{
+            display: 'grid',
+            gap: '16px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))'
+        }}>
+            {bookings.length === 0 ? (
+                <p style={{ color: '#888', fontSize: '1.1rem' }}>No bookings found.</p>
+            ) : (
+                bookings.map((booking) => (
+                    <div 
+                        key={booking.id} 
+                        style={{
+                            background: 'rgba(26, 26, 26, 0.85)',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(199, 255, 46, 0.2)',
+                            borderRadius: '16px',
+                            padding: '20px',
+                            transition: 'all 0.3s'
+                        }}
+                    >
+                        <p><strong>Booking ID:</strong> {booking.id}</p>
+                        <p><strong>User ID:</strong> {booking.user_id}</p>
+                        <p><strong>Venue ID:</strong> {booking.venue_id}</p>
+                        <p><strong>Start Time:</strong> {new Date(booking.start_datetime).toLocaleString()}</p>
+                        <p><strong>End Time:</strong> {new Date(booking.end_datetime).toLocaleString()}</p>
+                        <p><strong>Status:</strong> 
+                            <span style={{ 
+                                color: booking.status === 'confirmed' ? '#C7FF2E' : '#ffcc00',
+                                fontWeight: '600'
+                            }}>
+                                {booking.status}
+                            </span>
+                        </p>
+                        <p><strong>Price Paid:</strong> ${booking.total_price}</p>
+                    </div>
+                ))
+            )}
+        </div>
+
+        {/* Add Venue Modal */}
+        {showModal && (
+            <div style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                backgroundColor: 'rgba(15, 15, 15, 0.9)',
+                backdropFilter: 'blur(8px)',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 2000
+            }}>
+                <AddVenueFormByAdmin onClose={() => setShowModal(false)} />
+            </div>
+        )}
+    </div>
+);
+
 };
 
 export default AdminDashboard;

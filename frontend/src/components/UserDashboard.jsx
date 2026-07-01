@@ -22,6 +22,8 @@ const UserDashboard = () => {
 
     const handleBooking = (venue) =>{
         setSelectedVenue(venue);
+        setExploreVenueId(null);
+        setExploreVenueData(null);
     };
 
     const handleCloseForm = () => {
@@ -150,163 +152,321 @@ const UserDashboard = () => {
     if (error) return <p style={{ padding: '20px', color: 'red' }}>Error: {error}</p>;
 
 
-    if (exploreVenueId && exploreVenueData) {
     return (
-        <div style={{ padding: '30px', maxWidth: '600px', margin: '0 auto' }}>
-            <div style={{ border: '1px solid #ccc', padding: '25px', borderRadius: '8px' }}>
-                <h2>{exploreVenueData.name}</h2>
-                <p><strong>City:</strong> {exploreVenueData.city}</p>
-                <p><strong>Address:</strong> {exploreVenueData.address}</p>
-                <p><strong>Capacity:</strong> {exploreVenueData.capacity} people</p>
-                <p><strong>Price:</strong> ${exploreVenueData.price_per_hour} / hour</p>
-                <p><strong>Description:</strong> {exploreVenueData.description || 'No description provided.'}</p>
-                
-                <div style={{display: 'flex', justifyContent: 'start', alignItems: 'center', width: 'fill-content', gap: '30px'}}>
-                <button 
-                    onClick={() => {
-                        setExploreVenueId(null);
-                        setExploreVenueData(null);
-                        handleBooking(exploreVenueData)}}
-                    style={{ marginTop: '20px', padding: '10px', backgroundColor: '#3b0c67', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '150px' }}
-                >
-                    Book Venue
-                </button>
-                <button onClick={handleBackToDashboard} style={{ marginTop: '20px', padding: '10px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '200px' }}>
-                ← Back to Dashboard
-            </button>
-            </div>
-            </div>
-        </div>
-    );
-}
-
-    return (
-        <div style={{padding: '30px', maxWidth: '800px', margin: '0 auto'}}>
-
-            {selectedVenue && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
-                }}>
-                    <div style={{ position: 'relative' }}>
-                        <BookingForm 
-                            venueId={selectedVenue.id} 
-                            venueName={selectedVenue.name} 
-                            onClose={handleCloseForm}
-                        />
-                    </div>
-                </div>
-            )}
-
-            {showBookingsModal && (
-                <div style={{
-                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
-                    justifyContent: 'center', alignItems: 'center', zIndex: 1000
-                }}>
-                    <div style={{ 
-                        backgroundColor: 'white', padding: '30px', borderRadius: '8px', 
-                        width: '500px', maxHeight: '80vh', overflowY: 'auto', position: 'relative' 
+    <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #0F1A0F 100%)',
+        color: '#FFFFFF',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+        
+        {/* Explore Venue Detail View */}
+        {exploreVenueId && exploreVenueData ? (
+            <div style={{ padding: '40px 20px' }}>
+                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+                    <div style={{
+                        background: 'rgba(26, 26, 26, 0.92)',
+                        backdropFilter: 'blur(24px)',
+                        border: '1px solid rgba(199, 255, 46, 0.25)',
+                        borderRadius: '24px',
+                        padding: '45px',
+                        boxShadow: '0 25px 70px rgba(0, 0, 0, 0.7)'
                     }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h2 style={{ margin: 0 }}>My Bookings</h2>
-                            <button onClick={() => setShowBookingsModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer' }}>✕</button>
+                        <button 
+                            onClick={handleBackToDashboard}
+                            style={{
+                                marginBottom: '25px',
+                                padding: '10px 20px',
+                                background: 'transparent',
+                                color: '#C7FF2E',
+                                border: '1px solid rgba(199, 255, 46, 0.5)',
+                                borderRadius: '50px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            ← Back to Venues
+                        </button>
+
+                        <h2 style={{ marginTop: 0, color: '#C7FF2E', fontSize: '2.2rem' }}>
+                            {exploreVenueData.name}
+                        </h2>
+
+                        <div style={{ margin: '25px 0', lineHeight: '1.8' }}>
+                            <p><strong>City:</strong> {exploreVenueData.city}</p>
+                            <p><strong>Address:</strong> {exploreVenueData.address}</p>
+                            <p><strong>Capacity:</strong> {exploreVenueData.capacity} people</p>
+                            <p><strong>Price:</strong> ₹{exploreVenueData.price_per_hour} / hour</p>
+                            <p><strong>Description:</strong> {exploreVenueData.description || 'No description provided.'}</p>
                         </div>
-                        
-                        {userBookings.length === 0 ? (
-                            <p style={{ color: '#666', fontStyle: 'italic' }}>You don't have any booking records yet.</p>
-                        ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                                {userBookings.map((booking) => (
-                                    <div key={booking.id} style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '6px', backgroundColor: '#f9f9f9' }}>
-                                        <h4 style={{ margin: '0 0 5px 0' }}>Booking #{booking.id}</h4>
-                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>Start:</strong> {new Date(booking.start_datetime).toLocaleString()}</p>
-                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>End:</strong> {new Date(booking.end_datetime).toLocaleString()}</p>
-                                        <p style={{ margin: '3px 0', fontSize: '14px' }}><strong>Total Cost:</strong> 💰${booking.total_price}</p>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
-                                        <span style={{
-                                            display: 'inline-block', marginTop: '5px', padding: '3px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold',
-                                            backgroundColor: booking.status === 'confirmed' ? '#d1e7dd' : '#fff3cd',
-                                            color: booking.status === 'confirmed' ? '#0f5132' : '#664d03'
-                                        }}>{booking.status}
-                                        </span>
-                                         {booking.status !== 'cancelled' && (
-                                            <button
-                                                onClick={() => handleCancelBooking(booking.id)}
-                                                style={{
-                                                    padding: '6px 12px',
-                                                    backgroundColor: '#dc3545',
-                                                    color: 'white',
-                                                    border: 'none',
-                                                    borderRadius: '4px',
-                                                    cursor: 'pointer',
-                                                    fontSize: '13px'
-                                                }}
-                                            >Cancel</button>
-                                        )}
-                                    </div>
-                                    </div>
-                                ))}
+
+                        <div style={{ display: 'flex', gap: '15px', marginTop: '35px' }}>
+                            <button 
+                                onClick={() => handleBooking(exploreVenueData)}
+                                style={{
+                                    flex: 1,
+                                    padding: '16px',
+                                    background: '#C7FF2E',
+                                    color: '#0F0F0F',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    fontWeight: '700',
+                                    fontSize: '1.1rem',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s'
+                                }}
+                            >
+                                Book This Venue
+                            </button>
+
+                            <button 
+                                onClick={handleBackToDashboard}
+                                style={{
+                                    flex: 1,
+                                    padding: '16px',
+                                    background: 'transparent',
+                                    color: '#C7FF2E',
+                                    border: '2px solid #C7FF2E',
+                                    borderRadius: '50px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s'
+                                }}
+                                onMouseOver={(e) => e.target.style.background = 'rgba(199, 255, 46, 0.1)'}
+                                onMouseOut={(e) => e.target.style.background = 'transparent'}
+                            >
+                                ← Back to Dashboard
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        ) : (
+            /* ==================== MAIN USER DASHBOARD ==================== */
+            <div style={{ padding: '40px 20px' }}>
+                <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+                    {/* Booking Form Modal */}
+                    {selectedVenue && (
+                        <div style={{
+                            position: 'fixed', 
+                            top: 0, left: 0, width: '100vw', height: '100vh',
+                            backgroundColor: 'rgba(15, 15, 15, 0.9)',
+                            backdropFilter: 'blur(8px)',
+                            display: 'flex',
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            zIndex: 1000
+                        }}>
+                            <div style={{ position: 'relative' }}>
+                                <BookingForm 
+                                    venueId={selectedVenue.id} 
+                                    venueName={selectedVenue.name} 
+                                    onClose={handleCloseForm}
+                                />
                             </div>
-                        )}
-                    </div>
-                </div>
-            )}
+                        </div>
+                    )}
 
+                    {/* My Bookings Modal */}
+                    {showBookingsModal && (
+                        <div style={{
+                            position: 'fixed', 
+                            top: 0, left: 0, width: '100vw', height: '100vh',
+                            backgroundColor: 'rgba(15, 15, 15, 0.9)',
+                            backdropFilter: 'blur(8px)',
+                            display: 'flex',
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            zIndex: 1000
+                        }}>
+                            <div style={{ 
+                                background: 'rgba(26, 26, 26, 0.95)',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(199, 255, 46, 0.2)',
+                                borderRadius: '20px',
+                                width: '520px',
+                                maxHeight: '85vh',
+                                overflowY: 'auto',
+                                position: 'relative',
+                                padding: '30px'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
+                                    <h2 style={{ margin: 0, color: '#C7FF2E' }}>My Bookings</h2>
+                                    <button 
+                                        onClick={() => setShowBookingsModal(false)} 
+                                        style={{ 
+                                            background: 'none', 
+                                            border: 'none', 
+                                            fontSize: '28px', 
+                                            color: '#808080',
+                                            cursor: 'pointer' 
+                                        }}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                                
+                                {userBookings.length === 0 ? (
+                                    <p style={{ color: '#B0B0B0', fontSize: '1.1rem', textAlign: 'center', padding: '40px 0' }}>
+                                        You don't have any booking records yet.
+                                    </p>
+                                ) : (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                        {userBookings.map((booking) => (
+                                            <div 
+                                                key={booking.id} 
+                                                style={{
+                                                    background: 'rgba(40, 40, 40, 0.8)',
+                                                    border: '1px solid rgba(199, 255, 46, 0.15)',
+                                                    borderRadius: '12px',
+                                                    padding: '18px'
+                                                }}
+                                            >
+                                                <h4 style={{ margin: '0 0 10px 0', color: '#FFFFFF' }}>
+                                                    Booking #{booking.id}
+                                                </h4>
+                                                <p style={{ margin: '6px 0' }}><strong>Start:</strong> {new Date(booking.start_datetime).toLocaleString()}</p>
+                                                <p style={{ margin: '6px 0' }}><strong>End:</strong> {new Date(booking.end_datetime).toLocaleString()}</p>
+                                                <p style={{ margin: '6px 0' }}><strong>Total Cost:</strong> ₹{booking.total_price}</p>
+                                                
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
+                                                    <span style={{
+                                                        padding: '5px 14px',
+                                                        borderRadius: '30px',
+                                                        fontSize: '13px',
+                                                        fontWeight: '600',
+                                                        backgroundColor: booking.status === 'confirmed' ? 'rgba(199, 255, 46, 0.2)' : 'rgba(255, 204, 0, 0.2)',
+                                                        color: booking.status === 'confirmed' ? '#C7FF2E' : '#ffcc00'
+                                                    }}>
+                                                        {booking.status}
+                                                    </span>
+                                                    
+                                                    {booking.status !== 'cancelled' && (
+                                                        <button
+                                                            onClick={() => handleCancelBooking(booking.id)}
+                                                            style={{
+                                                                padding: '6px 16px',
+                                                                backgroundColor: '#ff4757',
+                                                                color: 'white',
+                                                                border: 'none',
+                                                                borderRadius: '50px',
+                                                                cursor: 'pointer',
+                                                                fontSize: '13px',
+                                                                fontWeight: '600'
+                                                            }}
+                                                        >
+                                                            Cancel
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ margin: 0 }}>Available Venues</h2>
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button 
-                        onClick={() => setShowBookingsModal(true)} 
-                        style={{ padding: '8px 15px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                    >
-                        My Bookings
-                    </button>
-                    <button 
-                        onClick={handleLogout} 
-                        style={{ padding: '8px 15px', backgroundColor: '#6c757d', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                    >
-                        Logout
-                    </button>
-                </div>
-            </div>
-
-            <div style={{display: 'grid', gap: '20px', marginTop: '20px'}}>
-                {venues.map((venue) => (
-                    <div key={venue.id} style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '6px'}}>
-                        <h3>{venue.name}</h3>
-                        <p>Location : {venue.city}</p>
-                        <p>Location : {venue.address}</p>
-                        <p>Capacity: {venue.capacity}</p>
-                        <div style={{display: 'flex', justifyContent: 'space-between', gap: '20px'}}>
+                    {/* Main Header */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '35px' }}>
+                        <h2 style={{ margin: 0, fontSize: '2.4rem', fontWeight: '800', color: '#C7FF2E' }}>
+                            Available Venues
+                        </h2>
+                        
+                        <div style={{ display: 'flex', gap: '12px' }}>
                             <button 
-                                onClick={() => handleBooking(venue)}
+                                onClick={() => setShowBookingsModal(true)} 
                                 style={{
-                                    marginTop: '10px', padding: '8px 12px', backgroundColor: '#007bff',
-                                    color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%',
-                                    fontWeight: '700'
+                                    padding: '12px 24px',
+                                    background: '#C7FF2E',
+                                    color: '#0F0F0F',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    fontWeight: '700',
+                                    cursor: 'pointer'
                                 }}
                             >
-                                Book Venue
+                                My Bookings
                             </button>
-
                             <button 
-                            onClick={() => handleExploreButton(venue.id)}
+                                onClick={handleLogout} 
                                 style={{
-                                    marginTop: '10px', padding: '8px 12px', backgroundColor: '#082748',
-                                    color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', width: '100%'
+                                    padding: '12px 24px',
+                                    background: '#ff4757',
+                                    color: 'white',
+                                    border: 'none',
+                                    borderRadius: '50px',
+                                    fontWeight: '600',
+                                    cursor: 'pointer'
                                 }}
                             >
-                                Explore More
+                                Logout
                             </button>
                         </div>
                     </div>
-                ))}
+
+                    {/* Venues Grid */}
+                    <div style={{ display: 'grid', gap: '20px', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))' }}>
+                        {venues.map((venue) => (
+                            <div 
+                                key={venue.id} 
+                                style={{
+                                    background: 'rgba(26, 26, 26, 0.85)',
+                                    backdropFilter: 'blur(12px)',
+                                    border: '1px solid rgba(199, 255, 46, 0.2)',
+                                    borderRadius: '16px',
+                                    padding: '24px'
+                                }}
+                            >
+                                <h3 style={{ margin: '0 0 16px 0', color: '#FFFFFF' }}>{venue.name}</h3>
+                                <p><strong>Location:</strong> {venue.city}</p>
+                                <p><strong>Address:</strong> {venue.address}</p>
+                                <p><strong>Capacity:</strong> {venue.capacity} people</p>
+
+                                <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+                                    <button 
+                                        onClick={() => handleBooking(venue)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '14px',
+                                            backgroundColor: '#C7FF2E',
+                                            color: '#0F0F0F',
+                                            border: 'none',
+                                            borderRadius: '50px',
+                                            cursor: 'pointer',
+                                            fontWeight: '700'
+                                        }}
+                                    >
+                                        Book Venue
+                                    </button>
+
+                                    <button 
+                                        onClick={() => handleExploreButton(venue.id)}
+                                        style={{
+                                            flex: 1,
+                                            padding: '14px',
+                                            backgroundColor: '#2E2E2E',
+                                            color: '#FFFFFF',
+                                            border: '1px solid rgba(199, 255, 46, 0.4)',
+                                            borderRadius: '50px',
+                                            cursor: 'pointer',
+                                            fontWeight: '600'
+                                        }}
+                                    >
+                                        Explore More
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
-        </div>
-    );
+        )}
+    </div>
+);
 };
 
 export default UserDashboard;

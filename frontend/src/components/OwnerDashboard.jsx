@@ -65,44 +65,122 @@ const OwnerDashboard = () => {
     if (error) return <p style={{ padding: '20px', color: 'red' }}>Error: {error}</p>;
 
     return (
-        <div>
-            {!showBookingsPage ? (
-                    <div style={{ padding: '30px', maxWidth: '800px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-            <div>
-            <h2 style={{ color: '#dc3545' }}>Owner's Dashboard</h2>
-            <h3>Your Venues Details</h3>
-            </div>
-            <div style={{ display: 'flex', marginBottom: '20px', gap: '10px' }}>
-                <button onClick={handleLogout} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
-                <button onClick={() => setShowBookingsPage(true)} style={{ float: 'right', padding: '8px 15px', backgroundColor: '#26199a', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>My venue's booking</button>
-            </div>
-            </div>
-            {venues.length === 0 ? (
-                <p>No venues found.</p>
-            ) : (
-                <div style={{ display: 'grid', gap: '15px', marginTop: '20px' }}>
-                    {venues.map((venue) => (
-                        <div key={venue.id} style={{ border: '1px solid #dc3545', padding: '15px', borderRadius: '6px', backgroundColor: '#fff5f5' }}>
-                            
-                            <p><strong>Name:</strong> {venue.name}</p>
-                            <p><strong>City:</strong> {venue.city}</p>
-                            <p><strong>Address:</strong> {venue.address}</p>
-                            <p><strong>Capacity:</strong> {venue.capacity}</p>
-                        </div>
-                    ))}
-                </div>
-            )}
+    <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #0F1A0F 100%)',
+        color: '#FFFFFF',
+        padding: '40px 20px',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+        {!showBookingsPage ? (
+            <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+                
+                {/* Header */}
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '40px',
+                    flexWrap: 'wrap',
+                    gap: '20px'
+                }}>
+                    <div>
+                        <h2 style={{ 
+                            margin: '0 0 8px 0', 
+                            fontSize: '2.5rem', 
+                            fontWeight: '800',
+                            color: '#C7FF2E'
+                        }}>
+                            Owner's Dashboard
+                        </h2>
+                        <h3 style={{ margin: 0, color: '#B0B0B0', fontWeight: '500' }}>
+                            Your Venues Details
+                        </h3>
+                    </div>
 
-            
-        </div>
-            ) : (
-                <VenuesBooking />
-            ) }
-        </div>
-        
-    );
-    
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                        <button 
+                            onClick={() => setShowBookingsPage(true)}
+                            style={{
+                                padding: '12px 24px',
+                                background: '#C7FF2E',
+                                color: '#0F0F0F',
+                                border: 'none',
+                                borderRadius: '50px',
+                                fontWeight: '700',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s'
+                            }}
+                            onMouseOver={(e) => e.target.style.transform = 'translateY(-3px)'}
+                            onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                        >
+                            My Venue's Bookings
+                        </button>
+
+                        <button 
+                            onClick={handleLogout}
+                            style={{
+                                padding: '12px 24px',
+                                background: '#ff4757',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '50px',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s'
+                            }}
+                        >
+                            Logout
+                        </button>
+                    </div>
+                </div>
+
+                {/* Venues List */}
+                {venues.length === 0 ? (
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '80px 20px',
+                        background: 'rgba(26, 26, 26, 0.7)',
+                        borderRadius: '20px',
+                        border: '1px solid rgba(199, 255, 46, 0.2)'
+                    }}>
+                        <p style={{ fontSize: '1.3rem', color: '#B0B0B0' }}>
+                            No venues found.
+                        </p>
+                    </div>
+                ) : (
+                    <div style={{ 
+                        display: 'grid', 
+                        gap: '18px',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))'
+                    }}>
+                        {venues.map((venue) => (
+                            <div 
+                                key={venue.id} 
+                                style={{
+                                    background: 'rgba(26, 26, 26, 0.85)',
+                                    backdropFilter: 'blur(12px)',
+                                    border: '1px solid rgba(199, 255, 46, 0.25)',
+                                    borderRadius: '16px',
+                                    padding: '24px',
+                                }}
+                            >
+                                <h3 style={{ marginTop: 0, marginBottom: '16px', color: '#C7FF2E' }}>
+                                    {venue.name}
+                                </h3>
+                                <p><strong>City:</strong> {venue.city}</p>
+                                <p><strong>Address:</strong> {venue.address}</p>
+                                <p><strong>Capacity:</strong> {venue.capacity} people</p>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        ) : (
+            <VenuesBooking />
+        )}
+    </div>
+);
 };
 
-export default OwnerDashboard;   
+export default OwnerDashboard;

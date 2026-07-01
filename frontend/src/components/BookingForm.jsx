@@ -64,57 +64,131 @@ const BookingForm = ({venueId, venueName, onClose }) => {
     };
 
     return (
+    <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0F0F0F 0%, #1A1A1A 50%, #0F1A0F 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+        fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+    }}>
+        
         <div style={{
-            width: '400px',
-            padding: '25px',
-            border: '1px solid #ccc',
-            borderRadius: '8px',
-            backgroundColor: '#fff',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+            background: 'rgba(26, 26, 26, 0.92)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid rgba(199, 255, 46, 0.25)',
+            borderRadius: '24px',
+            boxShadow: '0 25px 70px rgba(0, 0, 0, 0.7)',
+            padding: '40px 45px',
+            width: '100%',
+            maxWidth: '480px',
+            position: 'relative'
         }}>
-            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
-                <h3 style={{margin: '0'}}>Book {venueName || 'venue' }</h3>
+            {/* Header */}
+            <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                marginBottom: '30px' 
+            }}>
+                <h3 style={{ 
+                    margin: 0, 
+                    fontSize: '1.9rem', 
+                    fontWeight: '800',
+                    color: '#FFFFFF'
+                }}>
+                    Book {venueName || 'Venue'}
+                </h3>
+                
                 {onClose && (
-                    <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>✕</button>
+                    <button 
+                        onClick={onClose} 
+                        style={{ 
+                            background: 'none', 
+                            border: 'none', 
+                            fontSize: '28px', 
+                            color: '#808080',
+                            cursor: 'pointer',
+                            lineHeight: '1'
+                        }}
+                    >
+                        ✕
+                    </button>
                 )}
             </div>
 
+            {/* Message */}
             {message && (
                 <p style={{ 
-                    padding: '10px', 
-                    borderRadius: '4px', 
-                    backgroundColor: isError ? '#f8d7da' : '#d1e7dd', 
-                    color: isError ? '#842029' : '#0f5132',
-                    fontSize: '14px'
-                    }}>
-                        {message}
+                    padding: '12px 16px', 
+                    borderRadius: '10px', 
+                    backgroundColor: isError ? 'rgba(255, 107, 107, 0.15)' : 'rgba(199, 255, 46, 0.15)', 
+                    color: isError ? '#ff6b6b' : '#C7FF2E',
+                    fontSize: '15px',
+                    marginBottom: '25px',
+                    border: isError ? '1px solid rgba(255,107,107,0.3)' : '1px solid rgba(199,255,46,0.3)'
+                }}>
+                    {message}
                 </p>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                 <input type="hidden" name="venue_id" value={formData.venue_id} />
 
                 <div>
-                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Start Date & Time</label>
+                    <label style={{ 
+                        display: 'block', 
+                        marginBottom: '6px', 
+                        color: '#E0E0E0', 
+                        fontWeight: '500' 
+                    }}>
+                        Start Date & Time
+                    </label>
                     <input 
                         type="datetime-local" 
                         name="start_datetime"
                         value={formData.start_datetime}
                         onChange={handleChange}
                         required
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{
+                            width: '100%',
+                            padding: '14px 16px',
+                            background: 'rgba(255,255,255,0.08)',
+                            border: '1px solid rgba(199, 255, 46, 0.25)',
+                            borderRadius: '12px',
+                            color: 'white',
+                            fontSize: '1rem',
+                            outline: 'none'
+                        }}
                     />
-                    </div>
+                </div>
 
-                    <div>
-                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>End Date & Time</label>
+                <div>
+                    <label style={{ 
+                        display: 'block', 
+                        marginBottom: '6px', 
+                        color: '#E0E0E0', 
+                        fontWeight: '500' 
+                    }}>
+                        End Date & Time
+                    </label>
                     <input 
                         type="datetime-local" 
                         name="end_datetime"
                         value={formData.end_datetime}
                         onChange={handleChange}
                         required
-                        style={{ width: '100%', padding: '8px', boxSizing: 'border-box', borderRadius: '4px', border: '1px solid #ccc' }}
+                        style={{
+                            width: '100%',
+                            padding: '14px 16px',
+                            background: 'rgba(255,255,255,0.08)',
+                            border: '1px solid rgba(199, 255, 46, 0.25)',
+                            borderRadius: '12px',
+                            color: 'white',
+                            fontSize: '1rem',
+                            outline: 'none'
+                        }}
                     />
                 </div>
 
@@ -122,21 +196,27 @@ const BookingForm = ({venueId, venueName, onClose }) => {
                     type="submit" 
                     disabled={loading}
                     style={{ 
-                        marginTop: '10px',
-                        padding: '10px', 
-                        backgroundColor: loading ? '#ccc' : '#007bff', 
-                        color: 'white', 
+                        marginTop: '15px',
+                        padding: '16px', 
+                        background: loading ? '#555' : '#C7FF2E', 
+                        color: loading ? '#aaa' : '#0F0F0F', 
                         border: 'none', 
-                        borderRadius: '4px', 
+                        borderRadius: '60px', 
+                        fontSize: '1.1rem',
+                        fontWeight: '700',
                         cursor: loading ? 'not-allowed' : 'pointer',
-                        fontWeight: 'bold'
+                        transition: 'all 0.3s ease'
                     }}
-                    >
+                    onMouseOver={(e) => !loading && (e.target.style.transform = 'translateY(-3px)')}
+                    onMouseOut={(e) => !loading && (e.target.style.transform = 'translateY(0)')}
+                >
                     {loading ? 'Processing...' : 'Confirm Booking'}
                 </button>
             </form>
         </div>
-    );
+    </div>
+);
+
 };
 
 export default BookingForm;
