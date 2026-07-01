@@ -15,7 +15,7 @@ const OwnerDashboard = () => {
         localStorage.removeItem('token');
         navigate('/');
     };
-
+    let response = '';
     const handleVenueBookingsClick = () => {
     setShowBookingsPage(true);
   };
@@ -25,8 +25,12 @@ const OwnerDashboard = () => {
         const fetchVenues = async () => {
             try {
                 const token = localStorage.getItem('token');
+                    if (!token) {
+                    navigate('/'); 
+                    return;
+            }
                 
-                const response = await fetch('http://localhost:5000/api/owner-venues', {
+                response = await fetch('http://localhost:5000/api/owner-venues', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -41,6 +45,8 @@ const OwnerDashboard = () => {
                     throw new Error(data.message || "Failed to fetch venues");
                 }
 
+                
+
                 if (data.venues) {
                     setVenues(data.venues);
                 } else if (data.count === 0) {
@@ -53,6 +59,17 @@ const OwnerDashboard = () => {
                 
             } catch (err) {
                 setError(err.message);
+                console.error("Error fetching venues:", err);
+                const errMsg = err.response?.data?.message || err.message || '';
+                if (error.response?.status === 401 || 
+                    error.response?.status === 403 || 
+                    errMsg.toLowerCase().includes("access") || 
+                    errMsg.toLowerCase().includes("unauthorized")) {
+                
+                alert("Session expired or access denied. Redirecting to login...");
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';} 
             } finally {
                 setLoading(false);
             }

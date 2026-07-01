@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import AllVenues from './components/AllVenues';
 
 import Home from './components/Home';
 import SignUp from './components/SignUp'; 
@@ -20,6 +21,8 @@ function App() {
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/owner-dashboard" element={<OwnerDashboard />} />
+        
+        <Route path="/admin/venues" element={<AllVenues />} />
 
         <Route path='*' element={<Navigate to="/" replace />} />
       </Routes>

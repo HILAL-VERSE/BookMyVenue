@@ -99,6 +99,10 @@ const UserDashboard = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/'); 
+            return;
+        }
 
         const fetchVenues = async () => {
             try {
@@ -140,6 +144,17 @@ const UserDashboard = () => {
                 setUserBookings(data.bookings || []);
             }catch(err){
                 console.error("History fetch error: ", err.message);
+                console.error("Error fetching venues:", err);
+                const errMsg = err.response?.data?.message || err.message || '';
+                if (error.response?.status === 401 || 
+                    error.response?.status === 403 || 
+                    errMsg.toLowerCase().includes("access") || 
+                    errMsg.toLowerCase().includes("unauthorized")) {
+                
+                alert("Session expired or access denied. Redirecting to login...");
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';}
             }
         };
 

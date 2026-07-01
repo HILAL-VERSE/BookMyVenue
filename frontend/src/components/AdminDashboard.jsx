@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AddVenueFormByAdmin from './AddVenueFormByAdmin';
+import AllVenues from './AllVenues';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -16,11 +17,18 @@ const AdminDashboard = () => {
         navigate('/'); 
     };
 
+    const onClose = () => {
+        navigate('/admin-dashboard');
+    };
 
     useEffect(() => {
         const fetchBookings = async () => {
             try {
                 const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/'); 
+                    return;
+                }
                 
                 
                 const response = await fetch('http://localhost:5000/api/all-bookings', {
@@ -37,9 +45,19 @@ const AdminDashboard = () => {
                     throw new Error(data.message || "Failed to fetch bookings");
                 }
 
-                setBookings(data.bookings); 
+                setBookings(data.bookings || []); 
             } catch (err) {
                 setError(err.message);
+                const errMsg = err.response?.data?.message || err.message || '';
+                if (error.response?.status === 401 || 
+                    error.response?.status === 403 || 
+                    errMsg.toLowerCase().includes("access") || 
+                    errMsg.toLowerCase().includes("unauthorized")) {
+                
+                alert("Session expired or access denied. Redirecting to login...");
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/login';} 
             } finally {
                 setLoading(false);
             }
@@ -100,6 +118,24 @@ const AdminDashboard = () => {
                     onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
                 >
                     + Add Venue
+                </button>
+
+                <button 
+                    onClick={() => navigate('/admin/venues')}
+                    style={{
+                        padding: '12px 24px',
+                        background: '#C7FF2E',
+                        color: '#0F0F0F',
+                        border: 'none',
+                        borderRadius: '50px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s'
+                    }}
+                    onMouseOver={(e) => e.target.style.transform = 'translateY(-3px)'}
+                    onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
+                >
+                    View All Venues
                 </button>
 
                 <button 
