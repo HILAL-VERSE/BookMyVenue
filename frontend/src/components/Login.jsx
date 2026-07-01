@@ -64,7 +64,7 @@ const Login = () => {
                     navigate('/admin-dashboard');
                 } else if(userRole === 'user'){
                     navigate('/user-dashboard'); 
-                } else if (userRole == 'owner'){
+                } else if (userRole === 'owner'){
                     navigate('/owner-dashboard');
                 }
             }

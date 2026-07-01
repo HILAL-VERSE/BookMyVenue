@@ -6,6 +6,8 @@ const BookingForm = ({venueId, venueName, onClose }) => {
         start_datetime: '',
         end_datetime: ''
     });
+   
+
 
     const [message, setMessage] = useState('');
     const [isError, setIsError] = useState(false);
@@ -70,7 +72,7 @@ const BookingForm = ({venueId, venueName, onClose }) => {
             backgroundColor: '#fff',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
         }}>
-            <div style={{display: 'flex', justifyContent: 'between', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
+            <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px'}}>
                 <h3 style={{margin: '0'}}>Book {venueName || 'venue' }</h3>
                 {onClose && (
                     <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer' }}>✕</button>

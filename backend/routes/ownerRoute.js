@@ -43,7 +43,7 @@ router.get('/owner-venues', verifyToken, async (req, res) => {
     }
 })
 
-router.get('/Owner-booking', verifyToken, async (req, res) => {
+router.get('/owner-booking', verifyToken, async (req, res) => {
     let client;
     const userId = req.user.id;
 
