@@ -17,9 +17,7 @@ const AdminDashboard = () => {
         navigate('/'); 
     };
 
-    const onClose = () => {
-        navigate('/admin-dashboard');
-    };
+    
 
     useEffect(() => {
         const fetchBookings = async () => {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import bmvLogo from '../assets/bmv_logo.png';
+import homeLogo from '../assets/home_logo.png'
 
 const Home = () => {
   const navigate = useNavigate();
@@ -126,25 +127,38 @@ const Home = () => {
       {/* Hero Section */}
       <div style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '90vh',
         textAlign: 'center',
         padding: '40px 20px',
         position: 'relative',
+        gap: '0px',
         zIndex: 1
       }}>
-        <div style={{ maxWidth: '820px' }}>
+        <div>
+          <img 
+            src={homeLogo} 
+            alt="Book My Venue Logo" 
+            style={{ 
+              height: '424px', 
+              width:  '424px',
+              filter: 'drop-shadow(0 2px 6px rgba(129, 212, 27, 0.4))'
+            }} 
+          />
+        </div>
+        <div style={{ maxWidth: '820px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
           <h1 style={{
-            fontSize: '4.4rem',
+            fontSize: '4rem',
             fontWeight: '900',
             lineHeight: '1.05',
             marginBottom: '24px',
             letterSpacing: '-3.5px',
             background: 'linear-gradient(90deg, #FFFFFF, #C7FF2E)',
             WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
+            WebkitTextFillColor: 'transparent',
+            textAlign: 'left'
           }}>
             FIND YOUR<br />
             PERFECT VENUE
@@ -155,7 +169,9 @@ const Home = () => {
             color: '#B0B0B0',
             maxWidth: '580px',
             margin: '0 auto 50px',
-            lineHeight: '1.6'
+            lineHeight: '1.6',
+            textAlign: 'left',
+            lineHeight: '1.1'
           }}>
             Discover extraordinary spaces for your events, celebrations, and unforgettable moments.
           </p>
@@ -163,24 +179,16 @@ const Home = () => {
           <button 
             onClick={() => setShowPopup(true)}
             style={{
-              padding: '22px 56px',
-              fontSize: '1.4rem',
-              fontWeight: '700',
-              background: 'rgba(199, 255, 46, 0.95)',
-              color: '#0F0F0F',
+              width: '220px',
+              height: '40px',
+              fontSize: '1.3rem',
+              fontWeight: '900',
+              color: 'rgb(255, 255, 255)',
+              background: 'rgba(154, 202, 21, 0.95)',
+              //color: '#0F0F0F',
               border: 'none',
               borderRadius: '60px',
-              cursor: 'pointer',
-              boxShadow: '0 15px 45px rgba(199, 255, 46, 0.4)',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.transform = 'translateY(-6px) scale(1.05)';
-              e.target.style.boxShadow = '0 25px 60px rgba(199, 255, 46, 0.5)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.transform = 'translateY(0) scale(1)';
-              e.target.style.boxShadow = '0 15px 45px rgba(199, 255, 46, 0.4)';
+              cursor: 'pointer'
             }}
           >
             START NOW
