@@ -27,6 +27,12 @@ const BookingForm = ({venueId, venueName, onClose }) => {
         }));
     };
 
+    const getLocalDateTimeString = () => {
+        const tzOffset = new Date().getTimezoneOffset() * 60000; 
+        const localISOTime = new Date(Date.now() - tzOffset).toISOString().slice(0, 16);
+        return localISOTime;
+};
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -150,6 +156,7 @@ const BookingForm = ({venueId, venueName, onClose }) => {
                         name="start_datetime"
                         value={formData.start_datetime}
                         onChange={handleChange}
+                        min={getLocalDateTimeString()}
                         required
                         style={{
                             width: '100%',
@@ -179,6 +186,7 @@ const BookingForm = ({venueId, venueName, onClose }) => {
                         value={formData.end_datetime}
                         onChange={handleChange}
                         required
+                        min={getLocalDateTimeString()}
                         style={{
                             width: '100%',
                             padding: '14px 16px',
